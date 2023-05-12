@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CSocket
 {
@@ -68,8 +69,12 @@ public class CSocket
 
     private ConcurrentQueue<OnEvent> on_queue = new ConcurrentQueue<OnEvent>();
 
-    public ConcurrentQueue<OnEvent> GetOnQueue() => on_queue;
-    public void ClearOnQueue() => on_queue.Clear();
+    public OnEvent Dequeue_on()
+    {
+        OnEvent evt;
+        on_queue.TryDequeue(out evt);
+        return evt;
+    }
 
     public void EmitEvent(EmitEvent evt)
     {

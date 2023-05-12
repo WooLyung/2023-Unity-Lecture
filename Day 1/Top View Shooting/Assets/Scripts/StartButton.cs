@@ -31,10 +31,9 @@ public class StartButton : MonoBehaviour
             CSocket.Instance.EmitEvent(new EmitEvent_Update(time, time, time));
 
             // on
-            var on_queue = CSocket.Instance.GetOnQueue();
-            foreach (var evt in on_queue)
+            OnEvent evt;
+            while ((evt = CSocket.Instance.Dequeue_on()) != null)
                 Debug.Log(JsonUtility.ToJson(evt));
-            CSocket.Instance.ClearOnQueue();
         }
     }
 }
