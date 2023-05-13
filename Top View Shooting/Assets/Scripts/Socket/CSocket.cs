@@ -18,8 +18,8 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("13.124.53.124");
-    private int port = 56164;
+    private IPAddress ip = IPAddress.Parse("3.37.216.236");
+    private int port = 50513;
     private Socket socket = null;
 
     public bool Connect()
