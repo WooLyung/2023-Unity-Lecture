@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class CSocket
 {
@@ -18,9 +17,38 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("3.37.216.236");
-    private int port = 50513;
+    private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    private int port = 9172;
     private Socket socket = null;
+    private string buffer = "";
+
+    private string Read()
+    {
+        try
+        {
+            while (true)
+            {
+                byte[] byteBuffer = new byte[1024];
+                int bytesReceived = socket.Receive(byteBuffer);
+                string response = Encoding.ASCII.GetString(byteBuffer, 0, bytesReceived);
+                buffer += response;
+
+                if (response.Contains("#"))
+                {
+                    string[] splits = buffer.Split("#");
+                    buffer = splits[1];
+                    for (int i = 2; i < splits.Length; i++)
+                        buffer += "#" + splits[i];
+                    return splits[0];
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            return "";
+        }
+    }
 
     public bool Connect()
     {
@@ -46,25 +74,20 @@ public class CSocket
     {
         try
         {
-            string message = $"{{\"evt\":\"join\",\"nickname\":\"{nickname}\",\"color\":\"{color}\"}}#";
-            byte[] messageBytes = Encoding.ASCII.GetBytes(message);
-            socket.Send(messageBytes);
-
-            byte[] buffer = new byte[1024];
-            int bytesReceived = socket.Receive(buffer);
-            string response = Encoding.ASCII.GetString(buffer, 0, bytesReceived);
-            SocketResult result = JsonUtility.FromJson<SocketResult>(response);
-
-            if (result.result == "success")
-                return true;
-            else
-                return false;
+            EmitEvent(new EmitEvent_Join(nickname, color));
+            return true;
         }
         catch (Exception e)
         {
             Debug.Log(e);
             return false;
         }
+    }
+
+    public OnEvent_Init Init()
+    {
+        string response = Read();
+        return JsonUtility.FromJson<OnEvent_Init>(response);
     }
 
     private ConcurrentQueue<OnEvent> on_queue = new ConcurrentQueue<OnEvent>();
@@ -95,14 +118,10 @@ public class CSocket
         {
             try
             {
-                byte[] buffer = new byte[1024];
-                int bytesReceived = socket.Receive(buffer);
-                string[] response = Encoding.ASCII.GetString(buffer, 0, bytesReceived).Split("#");
-                foreach (string res in response)
-                {
-                    if (JsonUtility.FromJson<OnEvent_Update>(res) != null)
-                        on_queue.Enqueue(JsonUtility.FromJson<OnEvent_Update>(res));
-                }
+                string response = Read();
+                if (JsonUtility.FromJson<OnEvent_Update>(response) != null)
+                    on_queue.Enqueue(JsonUtility.FromJson<OnEvent_Update>(response));
+                Debug.Log(on_queue.Count);
             }
             catch (Exception e)
             {
