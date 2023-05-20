@@ -28,12 +28,14 @@ public class CSocket
         {
             while (true)
             {
-                byte[] byteBuffer = new byte[1024];
-                int bytesReceived = socket.Receive(byteBuffer);
-                string response = Encoding.ASCII.GetString(byteBuffer, 0, bytesReceived);
-                buffer += response;
-
-                if (response.Contains("#"))
+                if (!buffer.Contains("#")) // 버퍼에 온전한 데이터가 없다면 추가적으로 데이터를 읽음
+                {
+                    byte[] byteBuffer = new byte[1024];
+                    int byteReceived = socket.Receive(byteBuffer);
+                    string response = Encoding.ASCII.GetString(byteBuffer, 0, byteReceived);
+                    buffer += response;
+                }
+                if (buffer.Contains("#")) // 버퍼에 온전한 데이터가 있다면 그 중 가장 처음에 있는 데이터를 잘라서 반환
                 {
                     string[] splits = buffer.Split("#");
                     buffer = splits[1];
