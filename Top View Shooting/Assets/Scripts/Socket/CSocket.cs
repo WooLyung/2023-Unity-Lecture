@@ -58,6 +58,8 @@ public class CSocket
             {
                 IPEndPoint remoteEP = new IPEndPoint(ip, port);
                 socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
+                socket.ReceiveBufferSize = 65536;
                 socket.Connect(remoteEP);
             }
             catch (Exception e)
@@ -121,7 +123,6 @@ public class CSocket
                 string response = Read();
                 if (JsonUtility.FromJson<OnEvent_Update>(response) != null)
                     on_queue.Enqueue(JsonUtility.FromJson<OnEvent_Update>(response));
-                Debug.Log(on_queue.Count);
             }
             catch (Exception e)
             {
