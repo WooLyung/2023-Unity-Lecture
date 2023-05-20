@@ -23,7 +23,8 @@ public class Communicator : MonoBehaviour
             OnEvent evt;
             while ((evt = CSocket.Instance.Dequeue_on()) != null)
             {
-                // do something
+                if (evt is OnEvent_Update)
+                    main.UpdateEvent(evt as OnEvent_Update);
             }
         }
     }

@@ -9,7 +9,7 @@ using UnityEngine;
 public class CSocket
 {
     private static CSocket instance = null;
-    public static CSocket Instance {  get
+    public static CSocket Instance { get
         {
             if (instance == null)
                 instance = new CSocket();
@@ -17,31 +17,25 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("34.64.40.5"); // ê³ ì •ëœ IP
-    private int port = 9172; // ê³ ì •ëœ PORT
+    private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    private int port = 9172;
     private Socket socket = null;
-    private string buffer = ""; // ì„ì‹œ ë°ì´í„° ì €ì¥ ê³µê°„
+    private string buffer = "";
 
-    public OnEvent_Init Init()
-    {
-        string response = Read();
-        return JsonUtility.FromJson<OnEvent_Init>(response);
-    }
-
-    private string Read() // ì„œë²„ë¡œë¶€í„° ì˜¨ì „í•œ ë°ì´í„° í•˜ë‚˜ë¥¼ ì½ì–´ì„œ ë°˜í™˜
+    private string Read()
     {
         try
         {
             while (true)
             {
-                if (!buffer.Contains("#")) // ë²„í¼ì— ì˜¨ì „í•œ ë°ì´í„°ê°€ ì—†ë‹¤ë©´ ì¶”ê°€ì ìœ¼ë¡œ ë°ì´í„°ë¥¼ ì½ìŒ
+                if (!buffer.Contains("#")) // ¹öÆÛ¿¡ ¿ÂÀüÇÑ µ¥ÀÌÅÍ°¡ ¾ø´Ù¸é Ãß°¡ÀûÀ¸·Î µ¥ÀÌÅÍ¸¦ ÀĞÀ½
                 {
                     byte[] byteBuffer = new byte[1024];
                     int byteReceived = socket.Receive(byteBuffer);
                     string response = Encoding.ASCII.GetString(byteBuffer, 0, byteReceived);
                     buffer += response;
                 }
-                if (buffer.Contains("#")) // ë²„í¼ì— ì˜¨ì „í•œ ë°ì´í„°ê°€ ìˆë‹¤ë©´ ê·¸ ì¤‘ ê°€ì¥ ì²˜ìŒì— ìˆëŠ” ë°ì´í„°ë¥¼ ì˜ë¼ì„œ ë°˜í™˜
+                if (buffer.Contains("#")) // ¹öÆÛ¿¡ ¿ÂÀüÇÑ µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é ±× Áß °¡Àå Ã³À½¿¡ ÀÖ´Â µ¥ÀÌÅÍ¸¦ Àß¶ó¼­ ¹İÈ¯
                 {
                     string[] splits = buffer.Split("#");
                     buffer = splits[1];
@@ -64,9 +58,10 @@ public class CSocket
         {
             try
             {
-                IPEndPoint remoteEP = new IPEndPoint(ip, port); // ip:port
+                IPEndPoint remoteEP = new IPEndPoint(ip, port);
                 socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true); // ì†ë„ í–¥ìƒ
+                socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
+                socket.ReceiveBufferSize = 65536;
                 socket.Connect(remoteEP);
             }
             catch (Exception e)
@@ -93,6 +88,12 @@ public class CSocket
         }
     }
 
+    public OnEvent_Init Init()
+    {
+        string response = Read();
+        return JsonUtility.FromJson<OnEvent_Init>(response);
+    }
+
     private ConcurrentQueue<OnEvent> on_queue = new ConcurrentQueue<OnEvent>();
 
     public OnEvent Dequeue_on()
@@ -102,9 +103,15 @@ public class CSocket
         return evt;
     }
 
+    public void EmitEvent(EmitEvent evt)
+    {
+        string message = JsonUtility.ToJson(evt) + "#";
+        byte[] messageBytes = Encoding.ASCII.GetBytes(message);
+        socket.Send(messageBytes);
+    }
+
     public void Run()
     {
-
         Thread t = new Thread(new ThreadStart(ReadThread));
         t.Start();
     }
@@ -124,12 +131,5 @@ public class CSocket
                 Debug.Log(e);
             }
         }
-    }
-
-    public void EmitEvent(EmitEvent evt)
-    {
-        string message = JsonUtility.ToJson(evt) + "#";
-        byte[] messageBytes = Encoding.ASCII.GetBytes(message);
-        socket.Send(messageBytes);
     }
 }
