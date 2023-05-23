@@ -18,11 +18,11 @@ public class MainManager : MonoBehaviour
     {
         time += Time.deltaTime;
 
-        if (time >= 0.15f)
+        if (time >= 0.05f)
         {
-            time -= 0.15f;
+            time -= 0.05f;
             Transform pt = player.transform;
-            CSocket.Instance.EmitEvent("update", new EmitEvent_Update(pt.position.x, pt.position.y, pt.eulerAngles.z));
+            CSocket.Instance.EmitEvent(new EmitEvent_Update(pt.position.x, pt.position.y, pt.eulerAngles.z));
         }
     }
 
@@ -34,11 +34,11 @@ public class MainManager : MonoBehaviour
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Enemy"))
             Destroy(obj);
 
-        foreach (var other in evt.others)
+        foreach (var player in evt.players)
         {
             GameObject enemy = Instantiate(prefab);
-            enemy.transform.position = new Vector3(other.x, other.y);
-            enemy.transform.rotation = Quaternion.Euler(0, 0, other.angle);
+            enemy.transform.position = new Vector3(player.x, player.y);
+            enemy.transform.rotation = Quaternion.Euler(0, 0, player.angle);
         }
     }
 }

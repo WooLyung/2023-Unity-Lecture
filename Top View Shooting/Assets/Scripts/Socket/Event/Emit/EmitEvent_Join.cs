@@ -22,16 +22,11 @@ public class EmitEvent_Join : EmitEvent
         this.color = color;
     }
 
-    public override int GetCode()
+    public override byte[] ToBinary()
     {
-        return 0;
-    }
-
-    public override List<byte[]> ToBinary()
-    {
-        return new List<byte[]> {
-            System.Text.Encoding.UTF8.GetBytes(nickname.ToCharArray()),
-            System.Text.Encoding.UTF8.GetBytes(color.ToCharArray())
-        };
+        return ByteUtil.UnzipWrapped(0, new List<byte[]>() {
+            ByteUtil.From(nickname),
+            ByteUtil.From(color)
+        });
     }
 }

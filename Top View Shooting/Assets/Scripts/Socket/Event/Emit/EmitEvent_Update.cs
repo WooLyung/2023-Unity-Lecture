@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.Serialization;
 using UnityEngine;
 
-[Serializable]
 public class EmitEvent_Update : EmitEvent
 {
     public float x;
@@ -18,13 +18,12 @@ public class EmitEvent_Update : EmitEvent
         this.angle = angle;
     }
 
-    public override int GetCode()
+    public override byte[] ToBinary()
     {
-        return 1;
-    }
-
-    public override List<byte[]> ToBinary()
-    {
-        return null;
+        return ByteUtil.UnzipWrapped(1, new List<byte[]>() {
+            ByteUtil.From(x),
+            ByteUtil.From(y),
+            ByteUtil.From(angle)
+        });
     }
 }

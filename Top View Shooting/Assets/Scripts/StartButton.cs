@@ -10,7 +10,7 @@ public class StartButton : MonoBehaviour
         bool connect = CSocket.Instance.Connect();
         if (connect)
         {
-            bool join = CSocket.Instance.Join("name", "FF00FF");
+            bool join = CSocket.Instance.Join("name", "0000FF");
             if (join)
                 SceneManager.LoadScene("GameScene");
         }

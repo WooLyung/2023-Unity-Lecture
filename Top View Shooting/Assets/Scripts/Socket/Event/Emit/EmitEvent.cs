@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-public abstract class EmitEvent
+public abstract class EmitEvent : Decodable
 {
-    public abstract List<byte[]> ToBinary();
-
-    public abstract int GetCode();
+    public abstract byte[] ToBinary();
 }

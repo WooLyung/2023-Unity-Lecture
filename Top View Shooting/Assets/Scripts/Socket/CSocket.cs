@@ -35,20 +35,20 @@ public class CSocket
             int code = BitConverter.ToInt32(intBuffer);
 
             byte[] buffer = new byte[1024];
-            byte[] convertBuffer = new byte[size];
+            byte[] dataBuffer = new byte[size];
             int sumByte = 0;
 
             while (sumByte < size)
             {
-                byteReceived = socket.Receive(buffer);
-                Array.Copy(buffer, 0, convertBuffer, sumByte, byteReceived);
+                byteReceived = socket.Receive(buffer, Mathf.Min(1024, size - sumByte), SocketFlags.None);
+                Array.Copy(buffer, 0, dataBuffer, sumByte, byteReceived);
                 sumByte += byteReceived;
             }
 
             if (code == 0) // init
-                return null;
+                return new OnEvent_Init(dataBuffer);
             if (code == 1) // update
-                return null;
+                return new OnEvent_Update(dataBuffer);
 
             return null;
         }
@@ -85,7 +85,7 @@ public class CSocket
     {
         try
         {
-            EmitEvent("join", new EmitEvent_Join(nickname, color));
+            EmitEvent(new EmitEvent_Join(nickname, color));
             return true;
         }
         catch (Exception e)
@@ -109,25 +109,9 @@ public class CSocket
         return evt;
     }
 
-    public void EmitEvent(string name, EmitEvent evt)
+    public void EmitEvent(EmitEvent evt)
     {
-        int size = 0, offset = 8;
-
-        List<byte[]> byteArray = evt.ToBinary();
-        foreach (byte[] bytes in byteArray)
-            size += bytes.Length;
-
-        byte[] buffer = new byte[size + 8];
-        BitConverter.GetBytes(size).CopyTo(buffer, 0);
-        BitConverter.GetBytes(evt.GetCode()).CopyTo(buffer, 4);
-
-        foreach (byte[] bytes in byteArray)
-        {
-            bytes.CopyTo(buffer, offset);
-            offset += bytes.Length;
-        }
-
-        socket.Send(buffer);
+        socket.Send(evt.ToBinary());
     }
 
     public void Run()
