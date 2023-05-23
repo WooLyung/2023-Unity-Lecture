@@ -22,7 +22,7 @@ public class MainManager : MonoBehaviour
         {
             time -= 0.15f;
             Transform pt = player.transform;
-            CSocket.Instance.EmitEvent(new EmitEvent_Update(pt.position.x, pt.position.y, pt.eulerAngles.z));
+            CSocket.Instance.EmitEvent("update", new EmitEvent_Update(pt.position.x, pt.position.y, pt.eulerAngles.z));
         }
     }
 

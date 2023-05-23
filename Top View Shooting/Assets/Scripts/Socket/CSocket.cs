@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using UnityEngine;
 
@@ -17,38 +17,45 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    // private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    private IPAddress ip = IPAddress.Parse("127.0.0.1");
     private int port = 9172;
     private Socket socket = null;
-    private string buffer = "";
 
-    private string Read()
+    private OnEvent Read()
     {
         try
         {
-            while (true)
+            byte[] intBuffer = new byte[4];
+            int byteReceived;
+
+            byteReceived = socket.Receive(intBuffer);
+            int size = BitConverter.ToInt32(intBuffer);
+            byteReceived = socket.Receive(intBuffer);
+            int code = BitConverter.ToInt32(intBuffer);
+
+            byte[] buffer = new byte[1024];
+            byte[] convertBuffer = new byte[size];
+            int sumByte = 0;
+
+            while (sumByte < size)
             {
-                if (!buffer.Contains("#")) // 버퍼에 온전한 데이터가 없다면 추가적으로 데이터를 읽음
-                {
-                    byte[] byteBuffer = new byte[1024];
-                    int byteReceived = socket.Receive(byteBuffer);
-                    string response = Encoding.ASCII.GetString(byteBuffer, 0, byteReceived);
-                    buffer += response;
-                }
-                if (buffer.Contains("#")) // 버퍼에 온전한 데이터가 있다면 그 중 가장 처음에 있는 데이터를 잘라서 반환
-                {
-                    string[] splits = buffer.Split("#");
-                    buffer = splits[1];
-                    for (int i = 2; i < splits.Length; i++)
-                        buffer += "#" + splits[i];
-                    return splits[0];
-                }
+                byteReceived = socket.Receive(buffer);
+                Array.Copy(buffer, 0, convertBuffer, sumByte, byteReceived);
+                sumByte += byteReceived;
             }
+
+            if (code == 0) // init
+                return null;
+            if (code == 1) // update
+                return null;
+
+            return null;
         }
         catch (Exception e)
         {
             Debug.Log(e);
-            return "";
+            return null;
         }
     }
 
@@ -61,7 +68,7 @@ public class CSocket
                 IPEndPoint remoteEP = new IPEndPoint(ip, port);
                 socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
-                socket.ReceiveBufferSize = 65536;
+                socket.ReceiveBufferSize = 8192;
                 socket.Connect(remoteEP);
             }
             catch (Exception e)
@@ -78,7 +85,7 @@ public class CSocket
     {
         try
         {
-            EmitEvent(new EmitEvent_Join(nickname, color));
+            EmitEvent("join", new EmitEvent_Join(nickname, color));
             return true;
         }
         catch (Exception e)
@@ -90,8 +97,7 @@ public class CSocket
 
     public OnEvent_Init Init()
     {
-        string response = Read();
-        return JsonUtility.FromJson<OnEvent_Init>(response);
+        return Read() as OnEvent_Init;
     }
 
     private ConcurrentQueue<OnEvent> on_queue = new ConcurrentQueue<OnEvent>();
@@ -103,11 +109,25 @@ public class CSocket
         return evt;
     }
 
-    public void EmitEvent(EmitEvent evt)
+    public void EmitEvent(string name, EmitEvent evt)
     {
-        string message = JsonUtility.ToJson(evt) + "#";
-        byte[] messageBytes = Encoding.ASCII.GetBytes(message);
-        socket.Send(messageBytes);
+        int size = 0, offset = 8;
+
+        List<byte[]> byteArray = evt.ToBinary();
+        foreach (byte[] bytes in byteArray)
+            size += bytes.Length;
+
+        byte[] buffer = new byte[size + 8];
+        BitConverter.GetBytes(size).CopyTo(buffer, 0);
+        BitConverter.GetBytes(evt.GetCode()).CopyTo(buffer, 4);
+
+        foreach (byte[] bytes in byteArray)
+        {
+            bytes.CopyTo(buffer, offset);
+            offset += bytes.Length;
+        }
+
+        socket.Send(buffer);
     }
 
     public void Run()
@@ -122,9 +142,8 @@ public class CSocket
         {
             try
             {
-                string response = Read();
-                if (JsonUtility.FromJson<OnEvent_Update>(response) != null)
-                    on_queue.Enqueue(JsonUtility.FromJson<OnEvent_Update>(response));
+                OnEvent response = Read();
+                on_queue.Enqueue(response);
             }
             catch (Exception e)
             {
