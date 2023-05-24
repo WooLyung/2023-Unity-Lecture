@@ -18,9 +18,9 @@ public class MainManager : MonoBehaviour
     {
         time += Time.deltaTime;
 
-        if (time >= 0.05f)
+        if (time >= 0.02f)
         {
-            time -= 0.05f;
+            time -= 0.02f;
             Transform pt = player.transform;
             CSocket.Instance.EmitEvent(new EmitEvent_Update(pt.position.x, pt.position.y, pt.eulerAngles.z));
         }
