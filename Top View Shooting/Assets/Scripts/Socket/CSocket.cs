@@ -17,10 +17,11 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("34.64.40.5");
-    // private IPAddress ip = IPAddress.Parse("127.0.0.1");
+    // private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    private IPAddress ip = IPAddress.Parse("127.0.0.1");
     private int port = 9172;
     private Socket socket = null;
+    public bool isRunning { private set; get; } = true;
 
     private OnEvent Read()
     {
@@ -30,6 +31,12 @@ public class CSocket
             int byteReceived;
 
             byteReceived = socket.Receive(intBuffer);
+            if (byteReceived == 0)
+            {
+                Disconnect();
+                return null;
+            }
+
             int size = BitConverter.ToInt32(intBuffer);
             byteReceived = socket.Receive(intBuffer);
             int code = BitConverter.ToInt32(intBuffer);
@@ -52,11 +59,29 @@ public class CSocket
 
             return null;
         }
+        catch (SocketException e)
+        {
+            if (e.SocketErrorCode == SocketError.TimedOut)
+            {
+                Disconnect();
+                return null;
+            }
+            Debug.Log(e);
+            return null;
+        }
         catch (Exception e)
         {
             Debug.Log(e);
             return null;
         }
+    }
+
+    private void Disconnect()
+    {
+        isRunning = false;
+        if (!socket.Connected)
+            socket.Disconnect(true);
+        Debug.Log("Disconnect");
     }
 
     public bool Connect()
@@ -69,6 +94,8 @@ public class CSocket
                 socket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
                 socket.ReceiveBufferSize = 8192;
+                socket.ReceiveTimeout = 1000;
+                socket.SendTimeout = 1000;
                 socket.Connect(remoteEP);
             }
             catch (Exception e)
@@ -97,7 +124,9 @@ public class CSocket
 
     public OnEvent_Init Init()
     {
-        return Read() as OnEvent_Init;
+        OnEvent evt = null;
+        while (!((evt = Read()) is OnEvent_Init));
+        return evt as OnEvent_Init;
     }
 
     private ConcurrentQueue<OnEvent> on_queue = new ConcurrentQueue<OnEvent>();
@@ -111,7 +140,8 @@ public class CSocket
 
     public void EmitEvent(EmitEvent evt)
     {
-        socket.Send(evt.ToBinary());
+        if (socket.Connected)
+            socket.Send(evt.ToBinary());
     }
 
     public void Run()
@@ -122,10 +152,15 @@ public class CSocket
 
     private void ReadThread()
     {
-        while (true)
+        while (isRunning)
         {
             try
             {
+                if (!socket.Connected)
+                {
+                    Disconnect();
+                    break;
+                }
                 OnEvent response = Read();
                 on_queue.Enqueue(response);
             }
