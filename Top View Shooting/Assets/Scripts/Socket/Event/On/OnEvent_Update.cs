@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 
+[Serializable]
 public class OnEvent_Update : OnEvent
 {
+    [Serializable]
     public class Player
     {
         public int id;

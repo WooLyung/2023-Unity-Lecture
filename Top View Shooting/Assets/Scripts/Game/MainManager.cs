@@ -41,4 +41,14 @@ public class MainManager : MonoBehaviour
             enemy.transform.rotation = Quaternion.Euler(0, 0, player.angle);
         }
     }
+
+    public void JoinEvent(OnEvent_Join evt)
+    {
+        Debug.Log($"{JsonUtility.ToJson(evt)}");
+    }
+
+    public void LeaveEvent(OnEvent_Leave evt)
+    {
+        Debug.Log($"{JsonUtility.ToJson(evt)}");
+    }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 [Serializable]
 public class OnEvent_Init : OnEvent
 {
+    [Serializable]
     public class Map
     {
         public int type;
@@ -20,6 +21,7 @@ public class OnEvent_Init : OnEvent
         }
     }
 
+    [Serializable]
     public class Other
     {
         public int id;

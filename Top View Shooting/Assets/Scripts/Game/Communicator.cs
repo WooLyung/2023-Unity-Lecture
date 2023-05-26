@@ -25,6 +25,10 @@ public class Communicator : MonoBehaviour
             {
                 if (evt is OnEvent_Update)
                     main.UpdateEvent(evt as OnEvent_Update);
+                if (evt is OnEvent_Join)
+                    main.JoinEvent(evt as OnEvent_Join);
+                if (evt is OnEvent_Leave)
+                    main.LeaveEvent(evt as OnEvent_Leave);
             }
         }
     }

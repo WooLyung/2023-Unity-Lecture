@@ -56,6 +56,10 @@ public class CSocket
                 return new OnEvent_Init(dataBuffer);
             if (code == 1) // update
                 return new OnEvent_Update(dataBuffer);
+            if (code == 2) // join
+                return new OnEvent_Join(dataBuffer);
+            if (code == 3) // leave
+                return new OnEvent_Leave(dataBuffer);
 
             return null;
         }
