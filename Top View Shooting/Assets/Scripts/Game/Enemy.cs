@@ -1,13 +1,19 @@
-using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    private SpriteRenderer sprite1;
+    private SpriteRenderer sprite1, sprite2;
 
     [SerializeField]
-    private SpriteRenderer sprite2;
+    private Transform body;
+
+    [SerializeField]
+    private Slider hpBar;
+
+    [SerializeField]
+    private Text nicknameText;
 
     public int id;
     public int hp;
@@ -20,11 +26,14 @@ public class Enemy : MonoBehaviour
         sprite1.color = color;
         sprite2.color = color;
         transform.position = new Vector2(info.x, info.y);
-        transform.eulerAngles = new Vector3(0, 0, info.angle);
+        body.eulerAngles = new Vector3(0, 0, info.angle);
         id = info.id;
         nickname = info.nickname;
         hp = info.hp;
         name = $"enemy #{id} : {nickname}";
+
+        nicknameText.text = nickname.Trim();
+        hpBar.value = info.hp / 100.0f;
     }
 
     public void Init(OnEvent_Join info)
@@ -34,11 +43,14 @@ public class Enemy : MonoBehaviour
         sprite1.color = color;
         sprite2.color = color;
         transform.position = new Vector2(info.x, info.y);
-        transform.eulerAngles = new Vector3(0, 0, info.angle);
+        body.eulerAngles = new Vector3(0, 0, info.angle);
         id = info.id;
         nickname = info.nickname;
         hp = info.hp;
         name = $"enemy #{id} : {nickname}";
+
+        nicknameText.text = nickname.Trim();
+        hpBar.value = info.hp / 100.0f;
     }
 
     public void Destroy()
@@ -49,6 +61,8 @@ public class Enemy : MonoBehaviour
     public void UpdateEvent(OnEvent_Update.Player info)
     {
         transform.position = new Vector2(info.x, info.y);
-        transform.eulerAngles = new Vector3(0, 0, info.angle);
+        body.eulerAngles = new Vector3(0, 0, info.angle);
+        hp = info.hp;
+        hpBar.value = info.hp / 100.0f;
     }
 }

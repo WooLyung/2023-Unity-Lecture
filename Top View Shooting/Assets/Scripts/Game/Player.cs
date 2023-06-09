@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
             vec.x += 1;
         if (Input.GetKey(KeyCode.A))
             vec.x -= 1;
+
         transform.position += vec.normalized * Time.fixedDeltaTime * 5.0f;
     }
 }

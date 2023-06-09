@@ -7,9 +7,13 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     private Player player;
 
+    [SerializeField]
+    private EnemyManager enemyManager;
+
     public void Init(OnEvent_Init evt)
     {
         player.Init(evt.id, evt.nickname, evt.color, evt.x, evt.y);
+        enemyManager.InitEvent(evt);
     }
 
     private float time = 0;
@@ -26,29 +30,18 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    [SerializeField]
-    private GameObject prefab;
-
     public void UpdateEvent(OnEvent_Update evt)
     {
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Enemy"))
-            Destroy(obj);
-
-        foreach (var player in evt.players)
-        {
-            GameObject enemy = Instantiate(prefab);
-            enemy.transform.position = new Vector3(player.x, player.y);
-            enemy.transform.rotation = Quaternion.Euler(0, 0, player.angle);
-        }
+        enemyManager.UpdateEvent(evt);
     }
 
     public void JoinEvent(OnEvent_Join evt)
     {
-        Debug.Log($"{JsonUtility.ToJson(evt)}");
+        enemyManager.JoinEvent(evt);
     }
 
     public void LeaveEvent(OnEvent_Leave evt)
     {
-        Debug.Log($"{JsonUtility.ToJson(evt)}");
+        enemyManager.LeaveEvent(evt);
     }
 }
