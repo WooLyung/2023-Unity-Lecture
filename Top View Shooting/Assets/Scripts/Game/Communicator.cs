@@ -29,6 +29,13 @@ public class Communicator : MonoBehaviour
                     main.JoinEvent(evt as OnEvent_Join);
                 if (evt is OnEvent_Leave)
                     main.LeaveEvent(evt as OnEvent_Leave);
+                if (evt is OnEvent_Damage)
+                {
+                    OnEvent_Damage evt2 = evt as OnEvent_Damage;
+                    Debug.Log($"{evt2.id} {evt2.victim} {evt2.damage}");
+                }
+                if (evt is OnEvent_Death)
+                    main.DeathEvent(evt as OnEvent_Death);
             }
         }
     }

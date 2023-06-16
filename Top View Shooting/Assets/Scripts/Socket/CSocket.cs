@@ -17,8 +17,8 @@ public class CSocket
         }
     }
 
-    private IPAddress ip = IPAddress.Parse("34.64.40.5");
-    // private IPAddress ip = IPAddress.Parse("127.0.0.1");
+    // private IPAddress ip = IPAddress.Parse("34.64.40.5");
+    private IPAddress ip = IPAddress.Parse("127.0.0.1");
     private int port = 9172;
     private Socket socket = null;
     public bool isRunning { private set; get; } = true;
@@ -60,6 +60,10 @@ public class CSocket
                 return new OnEvent_Join(dataBuffer);
             if (code == 3) // leave
                 return new OnEvent_Leave(dataBuffer);
+            if (code == 4) // damage
+                return new OnEvent_Damage(dataBuffer);
+            if (code == 5) // death
+                return new OnEvent_Death(dataBuffer);
 
             return null;
         }

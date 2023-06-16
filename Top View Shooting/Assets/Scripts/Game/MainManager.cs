@@ -33,6 +33,7 @@ public class MainManager : MonoBehaviour
     public void UpdateEvent(OnEvent_Update evt)
     {
         enemyManager.UpdateEvent(evt);
+        player.UpdateEvent(evt);
     }
 
     public void JoinEvent(OnEvent_Join evt)
@@ -43,5 +44,10 @@ public class MainManager : MonoBehaviour
     public void LeaveEvent(OnEvent_Leave evt)
     {
         enemyManager.LeaveEvent(evt);
+    }
+
+    public void DeathEvent(OnEvent_Death evt)
+    {
+        enemyManager.DeathEvent(evt);
     }
 }

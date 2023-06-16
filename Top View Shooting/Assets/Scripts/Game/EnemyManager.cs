@@ -40,6 +40,13 @@ public class EnemyManager : MonoBehaviour
             enemy.Destroy();
     }
 
+    public void DeathEvent(OnEvent_Death evt)
+    {
+        Enemy enemy;
+        if (enemies.TryGetValue(evt.victim, out enemy))
+            enemy.Destroy();
+    }
+
     public void UpdateEvent(OnEvent_Update evt)
     {
         foreach (var player in evt.players)
