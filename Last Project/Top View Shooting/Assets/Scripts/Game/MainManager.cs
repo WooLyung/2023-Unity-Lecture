@@ -33,6 +33,7 @@ public class MainManager : MonoBehaviour
     public void UpdateEvent(OnEvent_Update evt)
     {
         enemyManager.UpdateEvent(evt);
+        player.UpdateEvent(evt);
     }
 
     public void JoinEvent(OnEvent_Join evt)

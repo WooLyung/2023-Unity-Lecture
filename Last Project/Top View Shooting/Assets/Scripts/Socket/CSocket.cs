@@ -60,6 +60,10 @@ public class CSocket
                 return new OnEvent_Join(dataBuffer);
             if (code == 3) // leave
                 return new OnEvent_Leave(dataBuffer);
+            if (code == 4) // damage
+                return new OnEvent_Damage(dataBuffer);
+            if (code == 5) // death
+                return new OnEvent_Death(dataBuffer);
 
             return null;
         }
