@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 74
+  controlID: 84
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 75
+  controlID: 85
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 76
+  controlID: 86
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -348,21 +348,21 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Socket
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Scripts/Socket
+  - Assets/Scenes
   m_LastFoldersGridSize: 96
   m_LastProjectPath: C:\Users\DELL\Desktop\2023-Unity-Lecture\Top View Shooting
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 80.600006}
-    m_SelectedIDs: c8610000
-    m_LastClickedID: 25032
+    scrollPos: {x: 0, y: 79}
+    m_SelectedIDs: b2610000
+    m_LastClickedID: 25010
     m_ExpandedIDs: 000000008c6100008e61000090610000926100009461000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -521,9 +521,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: ec210000
+      m_SelectedIDs: 68770000
       m_LastClickedID: 0
-      m_ExpandedIDs: 0afbffff
+      m_ExpandedIDs: 5e06fdffcc09fdff6482fdffe4a1fdffdc2afeffa82bfeffc661feffb8a8feffa2a9feff74abfeffca0fffffb210ffff2a11ffff6211ffff9a11ffff6469ffff506afffff46affffd477ffff6a78ffff3aafffff26b0ffff8cb1ffff4acaffff3acbffffdeeaffffaaecffff94edffff7ef4ffffbcf5ffffdef8ffff0afbffffa883000018900000be91000084970000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -795,9 +795,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 715.7217, y: 646.66156, z: -0.9616599}
+    m_Target: {x: -0.14815977, y: 0.01873687, z: -0.063534856}
     speed: 2
-    m_Value: {x: 715.7217, y: 646.66156, z: -0.9616599}
+    m_Value: {x: -0.14815977, y: 0.01873687, z: -0.063534856}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -848,9 +848,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 757.4469
+    m_Target: 6.201283
     speed: 2
-    m_Value: 757.4469
+    m_Value: 6.201283
   m_Ortho:
     m_Target: 1
     speed: 2
